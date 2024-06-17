@@ -5,6 +5,7 @@ import com.example.springdb1.domain.Member;
 import lombok.extern.slf4j.Slf4j;
 
 import java.sql.*;
+import java.util.NoSuchElementException;
 
 /*
 * JDBC - DriverManager 사용
@@ -17,7 +18,7 @@ public class MemberRepositoryV0 {
         Connection conn = null;
         PreparedStatement pstmt = null;
 
-        try { // C, P, R은 AutoCloseable을 상속받아 try-with-resources 문법으로 자원 사용 후 반납 가능
+        try { // C, P, R은 AutoCloseable을 상속받아 try-with-resources 문법으로 자원 사용 후 반납 가능g
             conn = getConnection();
             pstmt = conn.prepareStatement(sql);
             pstmt.setString(1, member.getMemberId());
@@ -33,6 +34,38 @@ public class MemberRepositoryV0 {
 
     }
 
+    public Member findById(String memberId) throws SQLException {
+        String sql = "select * from member_db_1 where member_id = ?";
+
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+
+        try {
+            conn = getConnection();
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setString(1, memberId);
+
+            rs = pstmt.executeQuery();
+
+            if (rs.next()) {
+                Member member = new Member();
+                member.setMemberId(rs.getString("member_id"));
+                member.setMoney(rs.getInt("money"));
+                return member;
+            } else {
+                throw new NoSuchElementException("member not found memberId = " + memberId);
+            }
+
+        } catch (SQLException e) {
+            log.error("findById error : " + e);
+            throw e;
+        } finally {
+            close(conn, pstmt, rs);
+        }
+    }
+
+    // 리소스 해제는 예외가 발생하든 말든 꼭 해제해야함. 해제는 역순으로.
     private void close(Connection conn, Statement stmt, ResultSet rs) {
         if (rs != null) {
             try {
