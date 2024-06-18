@@ -18,7 +18,7 @@ public class MemberRepositoryV0 {
         Connection conn = null;
         PreparedStatement pstmt = null;
 
-        try { // C, P, R은 AutoCloseable을 상속받아 try-with-resources 문법으로 자원 사용 후 반납 가능g
+        try { // C, P, R은 AutoCloseable을 상속받아 try-with-resources 문법으로 자원 사용 후 반납 가능
             conn = getConnection();
             pstmt = conn.prepareStatement(sql);
             pstmt.setString(1, member.getMemberId());
@@ -62,6 +62,46 @@ public class MemberRepositoryV0 {
             throw e;
         } finally {
             close(conn, pstmt, rs);
+        }
+    }
+
+    public void update(String memberId, int money) throws SQLException {
+        String sql = "update member_db_1 set money = ? where member_id = ?";
+
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+
+        try {
+            conn = getConnection();
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setInt(1, money);
+            pstmt.setString(2, memberId);
+            int resultSize = pstmt.executeUpdate();
+            log.info("resultSize={}", resultSize);
+        } catch (SQLException e) {
+            log.error("error : " + e);
+            throw e;
+        } finally {
+            close(conn, pstmt, null);
+        }
+    }
+
+    public void delete(String memberId) throws SQLException {
+        String sql = "delete from member_db_1 where member_id = ?";
+
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+
+        try {
+            conn = getConnection();
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setString(1, memberId);
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            log.error("error : " + e);
+            throw e;
+        } finally {
+            close(conn, pstmt, null);
         }
     }
 
