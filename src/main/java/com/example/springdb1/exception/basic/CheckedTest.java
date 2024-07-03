@@ -5,7 +5,8 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 // 체크예외: 복구 가능성이 있는 예외, 컴파일러가 예외 처리를 강제화 한다. -> Exception을 상속 받은 예외 객체
-// 언체크 예외: 복구 가능성이 없다고 판단되는 예외, 컴파일러가 예외 처리를 강제화하지 않음 (Error와 비슷하다.) -> RuntimeException을 상속 받은 예외 객체
+// 언체크 예외: 복구 가능성이 없다고 판단되는 예외, 컴파일러가 예외 처리를 강제화하지 않음 (Error와 비슷하다. throws를 생략해준다.)
+// -> RuntimeException을 상속 받은 예외 객체
 @Slf4j
 public class CheckedTest {
 
