@@ -8,6 +8,8 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 import org.springframework.transaction.support.TransactionTemplate;
 
+import java.sql.SQLException;
+
 /**
  * 트랜잭션 - 트랜잭션 템플릿 사용
  */
@@ -24,10 +26,16 @@ public class MemberServiceV3_2 {
 
     public void accountTransfer(String fromId, String toId, int money) {
         // 트랜잭션 템플릿을 사용하면 기존에 트랜잭션 메니저를 직접 사용할 때 보다 템플릿 콜백 패턴으로 반복되는 코드를 템플릿으로 줄여준다.
-        txTemplate.executeWithoutResult((status) -> bizLogic(fromId, toId, money));
+        txTemplate.executeWithoutResult((status) -> {
+            try {
+                bizLogic(fromId, toId, money);
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+        });
     }
 
-    private void bizLogic(String fromId, String toId, int money) {
+    private void bizLogic(String fromId, String toId, int money) throws SQLException {
         Member fromMember = memberRepositoryV3.findById(fromId);
         Member toMember = memberRepositoryV3.findById(toId);
 

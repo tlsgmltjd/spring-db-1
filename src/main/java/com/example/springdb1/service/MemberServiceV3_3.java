@@ -5,6 +5,8 @@ import com.example.springdb1.repository.MemberRepositoryV3;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.SQLException;
+
 /**
  * 트랜잭션 - @Transactional AOP
  */
@@ -18,11 +20,11 @@ public class MemberServiceV3_3 {
     }
 
     @Transactional // AOP로 부가기능인 트랜잭션 관련 코드들을 분리시킨다!!!!
-    public void accountTransfer(String fromId, String toId, int money) {
+    public void accountTransfer(String fromId, String toId, int money) throws SQLException {
         bizLogic(fromId, toId, money);
     }
 
-    private void bizLogic(String fromId, String toId, int money) {
+    private void bizLogic(String fromId, String toId, int money) throws SQLException {
         Member fromMember = memberRepositoryV3.findById(fromId);
         Member toMember = memberRepositoryV3.findById(toId);
 

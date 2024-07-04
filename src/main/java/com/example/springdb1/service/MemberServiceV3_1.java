@@ -8,6 +8,8 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
+import java.sql.SQLException;
+
 /**
  * 트랜잭션 - 트랜잭션 매니저 적용
  */
@@ -36,7 +38,7 @@ public class MemberServiceV3_1 {
         // 릴리즈도 TXM에서 해준다. (커밋이나 롤백시)
     }
 
-    private void bizLogic(String fromId, String toId, int money) {
+    private void bizLogic(String fromId, String toId, int money) throws SQLException {
         Member fromMember = memberRepositoryV3.findById(fromId);
         Member toMember = memberRepositoryV3.findById(toId);
 
