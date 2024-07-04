@@ -17,11 +17,11 @@ import java.util.NoSuchElementException;
 * */
 @Slf4j
 @RequiredArgsConstructor
-public class MemberRepositoryV3 {
+public class MemberRepositoryV3 implements MemberRepositoryEx {
 
     private final DataSource dataSource;
 
-    public Member save(Member member) {
+    public Member save(Member member) throws SQLException {
         String sql = "insert into member_db_1(member_id, money) values (? ,?)";
 
         Connection conn = null;
@@ -36,14 +36,14 @@ public class MemberRepositoryV3 {
             return member;
         } catch (SQLException e) {
             log.error("error : " + e);
-            throw new RuntimeException();
+            throw e;
         } finally {
             close(conn, pstmt, null);
         }
 
     }
 
-    public Member findById(String memberId) {
+    public Member findById(String memberId) throws SQLException {
         String sql = "select * from member_db_1 where member_id = ?";
 
         Connection conn = null;
@@ -68,7 +68,7 @@ public class MemberRepositoryV3 {
 
         } catch (SQLException e) {
             log.error("findById error : " + e);
-            throw new RuntimeException();
+            throw e;
         } finally {
             // 커넥션은 여기서 닫지 않는다. (같은 트랜잭션의 다른 작업에도 동일한 커넥션을 이어서 사용해야하기 때문)
             JdbcUtils.closeResultSet(rs);
@@ -76,7 +76,7 @@ public class MemberRepositoryV3 {
         }
     }
 
-    public void update(String memberId, int money) {
+    public void update(String memberId, int money) throws SQLException {
         String sql = "update member_db_1 set money = ? where member_id = ?";
 
         Connection conn = null;
@@ -91,7 +91,7 @@ public class MemberRepositoryV3 {
             log.info("resultSize={}", resultSize);
         } catch (SQLException e) {
             log.error("error : " + e);
-            throw new RuntimeException();
+            throw e;
         } finally {
             close(conn, pstmt, null);
         }
@@ -110,7 +110,7 @@ public class MemberRepositoryV3 {
             pstmt.executeUpdate();
         } catch (SQLException e) {
             log.error("error : " + e);
-            throw new RuntimeException();
+            throw e;
         } finally {
             close(conn, pstmt, null);
         }
